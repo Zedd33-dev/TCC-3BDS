@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-title">
+  <h3 class="mb-0">Relatórios e Insights</h3>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-12 col-lg-6">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="fw-bold mb-1">Distribuição de status</h5>
+        <p class="text-secondary small">Visão geral da situação atual do rebanho.</p>
+        <canvas id="statusReportChart" height="150"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-lg-6">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="fw-bold mb-1">Custos por categoria (mês)</h5>
+        <p class="text-secondary small">Acompanhe onde está o maior consumo financeiro.</p>
+        <canvas id="costReportChart" height="150"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-xl-6">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="fw-bold mb-3">Top 5 vendas</h5>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead>
+              <tr><th>Animal</th><th>Data</th><th class="text-end">Valor</th></tr>
+            </thead>
+            <tbody>
+              {% for sale in top_sales %}
+              <tr>
+                <td><b>{{ sale.animal.ear_tag }}</b> {{ sale.animal.name }}</td>
+                <td>{{ sale.date|date:"d/m/Y" }}</td>
+                <td class="text-end">R$ {{ sale.price_brl }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="3" class="text-center text-secondary py-4">Sem vendas registradas.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-xl-6">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="fw-bold mb-3">Estoque ativo por fazenda</h5>
+        <ul class="list-group list-group-flush rounded-3 overflow-hidden">
+          {% for farm in farm_inventory %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>{{ farm.name }}</span>
+            <span class="badge text-bg-success rounded-pill">{{ farm.active_animals }}</span>
+          </li>
+          {% empty %}
+          <li class="list-group-item text-secondary">Sem fazendas cadastradas.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+  const statusData = {{ status_data|safe }};
+  const costData = {{ cost_by_category|safe }};
+
+  new Chart(document.getElementById('statusReportChart'), {
+    type: 'pie',
+    data: {
+      labels: statusData.map(x => x.status),
+      datasets: [{ data: statusData.map(x => x.total) }]
+    },
+    options: { plugins: { legend: { position: 'bottom' } } }
+  });
+
+  new Chart(document.getElementById('costReportChart'), {
+    type: 'bar',
+    data: {
+      labels: costData.map(x => x.category),
+      datasets: [{ data: costData.map(x => x.total), borderRadius: 10 }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+</script>
+{% endblock %}
