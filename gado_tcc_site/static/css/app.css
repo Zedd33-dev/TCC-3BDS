@@ -1,0 +1,150 @@
+:root{
+  --brand:#16a34a;
+  --brand-600:#15803d;
+  --bg:#f4f6fb;
+  --card:#ffffff;
+  --border: rgba(15,23,42,.10);
+  --muted:#64748b;
+}
+
+body{
+  background: var(--bg);
+}
+
+.navbar{
+  backdrop-filter: blur(10px);
+}
+
+.navbar.bg-white{
+  background: rgba(255,255,255,.82)!important;
+}
+
+.navbar-brand{
+  letter-spacing:.2px;
+}
+
+.container{
+  max-width: 1200px;
+}
+
+.card{
+  border-radius: 18px!important;
+}
+
+.card-kpi{
+  border-radius: 18px!important;
+  box-shadow: 0 10px 30px rgba(2,6,23,.06);
+}
+
+.shadow-sm{
+  box-shadow: 0 10px 30px rgba(2,6,23,.06)!important;
+}
+
+.table thead th{
+  color: var(--muted);
+  font-weight: 700;
+  font-size: .78rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border)!important;
+}
+
+.table td, .table th{
+  border-top: 1px solid rgba(15,23,42,.06)!important;
+}
+
+.table-hover tbody tr:hover{
+  background: rgba(22,163,74,.05);
+}
+
+.btn-primary{
+  background: var(--brand)!important;
+  border-color: var(--brand)!important;
+  font-weight: 700;
+}
+
+.btn-primary:hover{
+  background: var(--brand-600)!important;
+  border-color: var(--brand-600)!important;
+}
+
+.btn-outline-primary{
+  border-color: rgba(22,163,74,.35)!important;
+  color: var(--brand-600)!important;
+  font-weight: 700;
+}
+
+.btn-outline-primary:hover{
+  background: rgba(22,163,74,.12)!important;
+  border-color: rgba(22,163,74,.40)!important;
+  color: var(--brand-600)!important;
+}
+
+.form-control, .form-select{
+  border-radius: 14px!important;
+  border-color: rgba(15,23,42,.14)!important;
+  padding-top: .55rem;
+  padding-bottom: .55rem;
+}
+
+.form-control:focus, .form-select:focus{
+  border-color: rgba(22,163,74,.55)!important;
+  box-shadow: 0 0 0 .2rem rgba(22,163,74,.16)!important;
+}
+
+.badge-soft{
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  padding:.42rem .6rem;
+  border-radius: 999px;
+  font-weight: 700;
+  border:1px solid rgba(15,23,42,.10);
+}
+
+.badge-green{ background: rgba(22,163,74,.12); color: #0a7a2a; border-color: rgba(22,163,74,.20); }
+.badge-yellow{ background: rgba(245,158,11,.14); color: #a16207; border-color: rgba(245,158,11,.22); }
+.badge-gray{ background: rgba(100,116,139,.12); color: #334155; border-color: rgba(100,116,139,.22); }
+.badge-red{ background: rgba(239,68,68,.12); color: #b91c1c; border-color: rgba(239,68,68,.20); }
+
+.page-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.page-title h3{
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: -.01em;
+}
+
+.kpi-label{
+  color: var(--muted);
+  font-weight: 700;
+  font-size: .85rem;
+}
+
+.kpi-value{
+  font-size: 1.75rem;
+  font-weight: 900;
+}
+
+/* Filtros do django-filter (às vezes vêm sem class) */
+form select:not(.form-select),
+form input:not(.form-control):not(.btn),
+form textarea:not(.form-control){
+  border-radius: 14px;
+  border: 1px solid rgba(15,23,42,.14);
+  padding: .55rem .75rem;
+  width: 100%;
+}
+form select:not(.form-select):focus,
+form input:not(.form-control):not(.btn):focus,
+form textarea:not(.form-control):focus{
+  outline: none;
+  border-color: rgba(22,163,74,.55);
+  box-shadow: 0 0 0 .2rem rgba(22,163,74,.16);
+}
