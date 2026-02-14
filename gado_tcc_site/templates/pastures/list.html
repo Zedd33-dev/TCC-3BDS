@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-title">
+  <h3 class="mb-0">Pastos/Piquetes</h3>
+  <a class="btn btn-primary" href="{% url 'pasture_create' %}"><i class="bi bi-plus-lg me-1"></i>Novo</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead><tr><th>Fazenda</th><th>Nome</th><th>Área (ha)</th><th class='text-end'>Ações</th></tr></thead>
+        <tbody>
+          {% for i in items %}
+          <tr>
+            <td>{{ i.farm }}</td><td>{{ i.name }}</td><td>{{ i.area_ha }}</td>
+            <td class="text-end">
+              <a class="btn btn-sm btn-outline-secondary" href="{% url 'pasture_edit' i.id %}">Editar</a>
+              <a class="btn btn-sm btn-outline-danger" href="{% url 'pasture_delete' i.id %}">Remover</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="99" class="text-center text-secondary py-4">Sem registros.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% include 'partials/pagination.html' %}
+
+{% endblock %}
