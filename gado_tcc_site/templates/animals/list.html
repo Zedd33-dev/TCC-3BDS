@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-title">
+  <h3 class="mb-0">{{ title }}</h3>
+  <div class="d-flex gap-2">
+    <a class="btn btn-outline-secondary" href="{% url 'animals_export_csv' %}"><i class="bi bi-filetype-csv me-1"></i>CSV</a>
+    <a class="btn btn-outline-secondary" href="{% url 'animals_export_pdf' %}"><i class="bi bi-filetype-pdf me-1"></i>PDF</a>
+    <a class="btn btn-primary" href="{% url 'animal_create' %}"><i class="bi bi-plus-lg me-1"></i>Novo</a>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-3" style="border-radius:16px;">
+  <div class="card-body">
+    <form method="get" class="row g-2 align-items-end">
+      <div class="col-md-3">
+        <label class="form-label">Fazenda</label>
+        {{ filter.form.farm }}
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Lote</label>
+        {{ filter.form.group }}
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Sexo</label>
+        {{ filter.form.sex }}
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Status</label>
+        {{ filter.form.status }}
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Busca</label>
+        {{ filter.form.q }}
+      </div>
+      <div class="col-12">
+        <button class="btn btn-outline-primary btn-sm">Filtrar</button>
+        <a class="btn btn-outline-secondary btn-sm" href="{% url 'animal_list' %}">Limpar</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm" style="border-radius:16px;">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th>Brinco</th><th>Nome</th><th>Fazenda</th><th>Lote</th><th>Raça</th><th>Sexo</th><th>Status</th>
+            <th class="text-end">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in items %}
+          <tr>
+            <td><b>{{ i.ear_tag }}</b></td>
+            <td>{{ i.name }}</td>
+            <td>{{ i.farm }}</td>
+            <td>{{ i.group|default:"—" }}</td>
+            <td>{{ i.breed }}</td>
+            <td>{{ i.get_sex_display }}</td>
+            <td>
+              <span class="badge-soft {% if i.status == 'ATIVO' %}badge-green{% elif i.status == 'VENDIDO' %}badge-gray{% else %}badge-yellow{% endif %}">
+                {{ i.get_status_display }}
+              </span>
+            </td>
+            <td class="text-end">
+              <a class="btn btn-sm btn-outline-primary" href="{% url 'animal_detail' i.id %}"><i class="bi bi-box-arrow-up-right me-1"></i>Abrir</a>
+              <a class="btn btn-sm btn-outline-secondary" href="{% url 'animal_edit' i.id %}"><i class="bi bi-pencil-square me-1"></i>Editar</a>
+              <a class="btn btn-sm btn-outline-danger" href="{% url 'animal_delete' i.id %}"><i class="bi bi-trash3 me-1"></i>Remover</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="99" class="text-center text-secondary py-4">Sem animais cadastrados.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% include 'partials/pagination.html' %}
+
+{% endblock %}

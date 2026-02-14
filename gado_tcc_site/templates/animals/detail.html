@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-title">
+  <div>
+    <h3 class="mb-0">Animal <span class="text-secondary">#{{ object.ear_tag }}</span></h3>
+    <div class="text-secondary">Fazenda: <b>{{ object.farm }}</b> • Lote atual: <b>{{ object.group|default:"—" }}</b></div>
+  </div>
+  <div class="d-flex gap-2">
+    <a class="btn btn-outline-secondary" href="{% url 'animal_edit' object.id %}"><i class="bi bi-pencil-square me-1"></i>Editar</a>
+    <a class="btn btn-outline-secondary" href="{% url 'animal_list' %}"><i class="bi bi-arrow-left me-1"></i>Voltar</a>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-5">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <h5 class="mb-3">Dados</h5>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item d-flex justify-content-between"><span>Nome</span><b>{{ object.name|default:"—" }}</b></li>
+          <li class="list-group-item d-flex justify-content-between"><span>Raça</span><b>{{ object.breed|default:"—" }}</b></li>
+          <li class="list-group-item d-flex justify-content-between"><span>Sexo</span><b>{{ object.get_sex_display }}</b></li>
+          <li class="list-group-item d-flex justify-content-between"><span>Nascimento</span><b>{{ object.birth_date|default:"—" }}</b></li>
+          <li class="list-group-item d-flex justify-content-between"><span>Compra</span><b>{{ object.purchase_date|default:"—" }}</b></li>
+          <li class="list-group-item d-flex justify-content-between"><span>Status</span><span class="badge-soft {% if object.status == 'ATIVO' %}badge-green{% elif object.status == 'VENDIDO' %}badge-gray{% else %}badge-yellow{% endif %}">{{ object.get_status_display }}</span></li>
+          <li class="list-group-item d-flex justify-content-between"><span>Último peso</span>
+            <b>{% if last_weight %}{{ last_weight }} kg{% else %}—{% endif %}</b>
+          </li>
+          <li class="list-group-item d-flex justify-content-between"><span>GMD</span>
+            <b>
+              {% if recent_gmd %}{{ recent_gmd|floatformat:3 }} kg/dia (recente){% elif gmd %}{{ gmd|floatformat:3 }} kg/dia{% else %}—{% endif %}
+            </b>
+          </li>
+
+        </ul>
+        {% if object.notes %}
+          <div class="mt-3">
+            <div class="text-secondary small">Observações</div>
+            <div>{{ object.notes }}</div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if sale %}
+    <div class="card border-0 shadow-sm mt-3">
+      <div class="card-body">
+        <h5 class="mb-3">Venda</h5>
+        <div><b>Data:</b> {{ sale.date }}</div>
+        <div><b>Comprador:</b> {{ sale.buyer }}</div>
+        <div><b>Valor:</b> R$ {{ sale.price_brl }}</div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="col-lg-7">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5 class="mb-0">Evolução de peso</h5>
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'weight_create' %}">Adicionar pesagem</a>
+        </div>
+        <canvas id="wChart" height="130"></canvas>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mt-3">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5 class="mb-0">Vacinas</h5>
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'vaccination_create' %}">Registrar vacina</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-sm align-middle">
+            <thead><tr><th>Vacina</th><th>Data</th><th>Próximo</th><th>Dose</th></tr></thead>
+            <tbody>
+              {% for v in vaccs %}
+              <tr><td>{{ v.vaccine }}</td><td>{{ v.date }}</td><td>{{ v.next_due|default:"—" }}</td><td>{{ v.dose|default:"" }}</td></tr>
+              {% empty %}<tr><td colspan="99" class="text-secondary">Sem vacinas.</td></tr>{% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mt-3">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5 class="mb-0">Tratamentos</h5>
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'treatment_create' %}">Registrar tratamento</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-sm align-middle">
+            <thead><tr><th>Tipo</th><th>Produto</th><th>Data</th><th>Próximo</th></tr></thead>
+            <tbody>
+              {% for t in trts %}
+              <tr><td>{{ t.kind }}</td><td>{{ t.product|default:"" }}</td><td>{{ t.date }}</td><td>{{ t.next_due|default:"—" }}</td></tr>
+              {% empty %}<tr><td colspan="99" class="text-secondary">Sem tratamentos.</td></tr>{% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mt-3">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5 class="mb-0">Movimentações</h5>
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'movement_create' %}">Registrar movimentação</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-sm align-middle">
+            <thead><tr><th>Data</th><th>De</th><th>Para</th><th>Motivo</th></tr></thead>
+            <tbody>
+              {% for m in moves %}
+              <tr><td>{{ m.date }}</td><td>{{ m.from_group|default:"—" }}</td><td>{{ m.to_group|default:"—" }}</td><td>{{ m.reason|default:"" }}</td></tr>
+              {% empty %}<tr><td colspan="99" class="text-secondary">Sem movimentações.</td></tr>{% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+  const labels = {{ chart_labels|safe }};
+  const data = {{ chart_data|safe }};
+  new Chart(document.getElementById('wChart'), {
+    type: 'line',
+    data: { labels, datasets: [{ label: 'Peso (kg)', data }] },
+    options: { plugins: { legend: { display: false } } }
+  });
+</script>
+{% endblock %}
